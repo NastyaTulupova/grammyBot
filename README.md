@@ -1,2 +1,2 @@
 # grammyBot
-Telegram Bot
+Telegram Bot on Grammy library
