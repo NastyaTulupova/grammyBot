@@ -2,6 +2,10 @@
 require("dotenv").config();
 // Обращаемся к библиотеке grammy и импортируем из него класс Bot
 const { Bot, GrammyError, HttpError, Keyboard } = require("grammy");
+const { socials } = require("./utils/links");
+const { logger } = require("./utils/logger");
+const { createKeyboard } = require("./utils/helper");
+
 // Создаем своего бота на основе импортированного класса, передавая
 // в качестве аргумента ссылку на токен из .env файла
 const bot = new Bot(process.env.BOT_API_KEY);
@@ -39,14 +43,20 @@ bot.hears("Назад ↩️", async (ctx) => {
   });
 });
 
+function handleButtonClicks(items) {
+  items.forEach((item) => {
+    bot.hears(item.name, async (ctx) => {
+      let message = "";
+      message = `Вот ссылка на ${item.name}: ${item.url}`;
+      await ctx.reply(message);
+    });
+  });
+}
+
+handleButtonClicks(socials);
+
 bot.hears("📲 Социальные сети", async (ctx) => {
-  const socialKeyboard = new Keyboard()
-    .text("Inst")
-    .text("Vk")
-    .text("Site")
-    .row()
-    .text("Назад ↩️")
-    .resized();
+  const socialKeyboard = createKeyboard(socials);
   await ctx.reply("Выберите социальную сеть:", {
     reply_markup: socialKeyboard,
   });
